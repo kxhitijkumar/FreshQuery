@@ -104,6 +104,9 @@ The UI will automatically open in your browser at `http://localhost:8501`.
 6. **Generation:** **Mistral-7B** generates a concise answer grounded *strictly* in the retrieved web context.
 7. **Cleanup:** The FAISS index and text chunks are discarded immediately after the response is sent.
 
+   <img width="2032" height="805" alt="image" src="https://github.com/user-attachments/assets/21b8b5d0-4252-4eea-83e8-2644ffa7252d" />
+
+
 ---
 
 ## Limitations

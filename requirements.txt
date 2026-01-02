@@ -1,0 +1,22 @@
+# Web Framework & Server
+fastapi
+uvicorn
+httpx
+requests
+
+# Frontend
+streamlit
+
+# Web Crawling & Parsing
+crawl4ai>=0.7.8
+beautifulsoup4
+playwright
+
+# AI & Vector Search
+ollama
+sentence-transformers
+faiss-cpu
+numpy
+
+# Utilities
+python-multipart

@@ -94,7 +94,8 @@ streamlit run ui.py
     *   **Consensus:** Selects factual values (prices, dates, names) appearing in the majority of sources.
 6.  **Streaming Generation:** Mistral-7B streams tokens directly to the UI, while the grounding sources populate in a separate panel for immediate verification.
 
-   <img width="2032" height="805" alt="image" src="https://github.com/user-attachments/assets/21b8b5d0-4252-4eea-83e8-2644ffa7252d" />
+   <img width="2032" height="805" alt="image" src="https://github.com/user-attachments/assets/663cc00f-0825-4b1f-8256-0ec7a121b3f8" />
+
 
 
 ---

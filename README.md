@@ -1,43 +1,36 @@
-***
+# FreshQuery : Live Streaming & Grounded RAG Engine
 
-# FreshQuery: Live Web-Grounded QA Engine
+**FreshQuery** is a high-performance, live-grounded Retrieval-Augmented Generation (RAG) system. Unlike traditional RAG pipelines that rely on stale, pre-indexed databases, FreshQuery performs **on-demand web discovery and crawling** to provide answers grounded in the "Right Now."
 
-FreshQuery is a "Live RAG" (Retrieval-Augmented Generation) system that provides accurate, up-to-date answers by searching and crawling the live web in real-time. 
+With the integration of **Real-time Streaming**, **Majority Consensus Logic**, and **Temporal Grounding**, FreshQuery ensures that the information you receive is not only fresh but also verified across multiple independent sources.
 
-Unlike traditional RAG systems, FreshQuery **does not use a database or persistent vector store**. It builds a temporary, in-memory index for every single query, ensuring total data freshness and user privacy.
+---
 
-## Key Features
-- **Zero Persistence:** No SQL/NoSQL databases or persistent vector stores. Data exists only in RAM during the request cycle.
-- **Real-Time Freshness:** Uses **Whoogle Search** and **Crawl4AI** to get data from the live web "right now."
-- **Authoritative Sources:** Explicitly restricts retrieval to the top 4–5 most relevant web results.
-- **Grounded Answers:** Powered by **Mistral-7B-Instruct** via Ollama, with strict instructions to only answer using provided context.
-- **Minimalist Design:** Entire backend logic contained in a clean, high-performance FastAPI/Python structure.
+## Advanced Features
+
+- **Real-time Token Streaming:** Experience immediate feedback with a typewriter-style response interface.
+- **Majority Consensus Protocol:** Automatically cross-references multiple web sources to resolve conflicting information, prioritizing facts supported by the majority of links.
+- **Temporal Awareness:** Injects the current system date and time into the reasoning engine, allowing the AI to accurately interpret "today," "yesterday," and recent news events.
+- **Zero-Persistence Architecture:** Entirely ephemeral. Vectors and text chunks are generated in RAM per-query and discarded immediately after the response, ensuring 100% data privacy.
+- **Rank-Based Prioritization:** Respects search engine prominence, giving higher weight to top-ranked search results.
 
 ---
 
 ## Technology Stack
-| Layer | Technology |
-| :--- | :--- |
-| **LLM** | Mistral-7B-Instruct (via Ollama) |
-| **Search Engine** | Whoogle Search (Self-hosted/Docker) |
-| **Crawling** | Crawl4AI (Asynchronous Web Crawler) |
-| **Embeddings** | Sentence-Transformers (all-MiniLM-L6-v2) |
-| **Vector Search** | FAISS (In-memory CPU) |
-| **API Backend** | FastAPI |
-| **Frontend UI** | Streamlit |
+
+| Layer | Technology | Purpose |
+| :--- | :--- | :--- |
+| **LLM** | Mistral-7B-Instruct (via Ollama) | Streamed, grounded answer generation |
+| **Search Engine** | Whoogle Search (Docker) | Privacy-focused web discovery |
+| **Live Crawling** | Crawl4AI (Async) | On-the-fly markdown extraction |
+| **Embeddings** | Sentence-Transformers | Semantic chunk representation |
+| **Vector Search** | FAISS (In-Memory CPU) | Ephemeral similarity search |
+| **Backend** | FastAPI (Async Streaming) | High-concurrency API layer |
+| **Frontend** | Streamlit (Wide-Partitioned) | Modern, interactive user interface |
 
 ---
 
-## Prerequisites
-Before you begin, ensure you have the following installed:
-- **Python 3.10+**
-- **Docker** (to run Whoogle)
-- **Ollama** (to run Mistral)
-- **RAM:** 8GB minimum (16GB+ recommended for running Mistral locally)
-
----
-
-## Setup Instructions
+## Setup & Installation
 
 ### 1. Clone the Repository
 ```bash
@@ -45,70 +38,67 @@ git clone https://github.com/your-username/freshquery.git
 cd freshquery
 ```
 
-### 2. Set Up Python Environment
+### 2. Configure Environment
 ```bash
-# Create virtual environment
+# Create and activate virtual environment
 python -m venv venv
-
-# Activate venv (Windows)
-venv\Scripts\activate
-# Activate venv (Mac/Linux)
-source venv/bin/activate
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
 
-# Setup browser engines for Crawl4AI
+# Install browser binaries for the crawler
 playwright install chromium
 ```
 
-### 3. Start Infrastructure (Docker & Ollama)
-**Run Whoogle Search:**
+### 3. Initialize Infrastructure
+**Start Whoogle Search (Docker):**
 ```bash
 docker run -d -p 5000:5000 --name whoogle-search benbusby/whoogle-search:latest
 ```
 
-**Run Mistral via Ollama:**
-1. Install Ollama from [ollama.com](https://ollama.com).
-2. Open your terminal and run:
+**Prepare Mistral (Ollama):**
+Ensure Ollama is running, then pull the model:
 ```bash
 ollama pull mistral:7b-instruct
 ```
 
 ---
 
-## How to Run
+## Usage Instructions
 
-To run FreshQuery, you need to open **two separate terminals** (keep your virtual environment active in both).
+To operate the system, run the backend and frontend in separate terminals:
 
-### Step 1: Start the FastAPI Backend
+### Terminal 1: Backend API
 ```bash
 python app.py
 ```
-The backend will start at `http://localhost:8000`.
+*Starts the streaming-enabled FastAPI server at `http://localhost:8000`.*
 
-### Step 2: Start the Streamlit Frontend
+### Terminal 2: Streamlit Interface
 ```bash
 streamlit run ui.py
 ```
-The UI will automatically open in your browser at `http://localhost:8501`.
+*Launches the partitioned UI at `http://localhost:8501`.*
 
 ---
 
-## System Architecture
-1. **User Query:** User enters a question in the Streamlit UI.
-2. **Web Discovery:** FastAPI calls the Whoogle API to find the 5 most relevant URLs.
-3. **Live Crawling:** Crawl4AI extracts clean markdown/text content from those 5 URLs simultaneously.
-4. **Ephemeral Indexing:** Text is split into chunks, embedded, and stored in a temporary **FAISS** index in RAM.
-5. **Context Retrieval:** The system retrieves the top 4 text chunks matching the query.
-6. **Generation:** **Mistral-7B** generates a concise answer grounded *strictly* in the retrieved web context.
-7. **Cleanup:** The FAISS index and text chunks are discarded immediately after the response is sent.
+## System Architecture & Logic
+
+1.  **Temporal Injection:** The system captures the current date/time to ground the LLM's perception of "today."
+2.  **Web Discovery:** Whoogle finds the top 5 relevant URLs based on the user's query.
+3.  **Parallel Crawling:** Crawl4AI performs a live "headless" visit to all 5 sites simultaneously.
+4.  **Source-Aware Indexing:** Content is chunked and tagged with its **Search Rank** and **Source URL**.
+5.  **Fact-Checking Protocol:**
+    *   **Recency:** Prioritizes info with newer timestamps.
+    *   **Consensus:** Selects factual values (prices, dates, names) appearing in the majority of sources.
+6.  **Streaming Generation:** Mistral-7B streams tokens directly to the UI, while the grounding sources populate in a separate panel for immediate verification.
 
 ---
 
-## Limitations
-- **No Memory:** The system is stateless; it does not remember previous questions in a conversation.
-- **Latency:** Speed depends on web search response times and your local hardware's ability to run Mistral.
-- **Web Dependency:** If Whoogle or a specific website is down, results may vary.
+## Important Considerations
+- **Latency:** Because the system crawls the web at request-time, responses typically take 30-40 seconds depending on website speeds.
+- **Hardware:** Running Mistral-7B locally requires a minimum of 8GB RAM (16GB+ recommended).
+- **Rate Limits:** Frequent queries may lead to temporary IP blocks from search engines; use Whoogle responsibly.
 
 ---

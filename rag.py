@@ -86,7 +86,7 @@ class FreshQueryRAG:
 
         query_vec = embed_model.encode([query])
         # Retrieve top 7 chunks to give the LLM enough broad data for consensus checking
-        D, I = index.search(np.array(query_vec).astype('float32'), k=7)
+        D, I = index.search(np.array(query_vec).astype('float32'), k=5)
         
         context_parts = [chunks[i] for i in I[0] if i != -1]
         context_text = "\n\n---\n\n".join(context_parts)
@@ -119,7 +119,7 @@ USER QUESTION: {query}
                 prompt=prompt,
                 options={
                     "temperature": 0.0, # Setting to 0 for maximum factual strictness
-                    "num_ctx": 4096     # Ensure enough room for all snippets
+                    "num_ctx": 2048     # Ensure enough room for all snippets
                 }
             )
             return response['response'], unique_sources
